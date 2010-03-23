@@ -62,7 +62,7 @@ typedef union {
   void *p;
   lua_Number n;
   int b;
-	float vec[2];	// LUA-VEC
+  float vec[2]; // LUA-VEC
 } Value;
 
 
@@ -87,6 +87,7 @@ typedef struct lua_TValue {
 #define ttisuserdata(o)	(ttype(o) == LUA_TUSERDATA)
 #define ttisthread(o)	(ttype(o) == LUA_TTHREAD)
 #define ttislightuserdata(o)	(ttype(o) == LUA_TLIGHTUSERDATA)
+#define ttisvec(o)      (ttype(o) == LUA_TVEC) // LUA-VEC
 
 /* Macros to access values */
 #define ttype(o)	((o)->tt)
@@ -101,6 +102,7 @@ typedef struct lua_TValue {
 #define hvalue(o)	check_exp(ttistable(o), &(o)->value.gc->h)
 #define bvalue(o)	check_exp(ttisboolean(o), (o)->value.b)
 #define thvalue(o)	check_exp(ttisthread(o), &(o)->value.gc->th)
+#define vecvalue(o)     check_exp(ttisvec(o), (o)->value.vec)  // LUA-VEC
 
 #define l_isfalse(o)	(ttisnil(o) || (ttisboolean(o) && bvalue(o) == 0))
 
