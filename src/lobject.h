@@ -17,8 +17,8 @@
 
 
 /* tags for values visible from Lua */
-//#define LAST_TAG	LUA_TTHREAD
-#define LAST_TAG	LUA_TVEC		// LUA-VEC
+#define LAST_TAG	LUA_TTHREAD
+//#define LAST_TAG	LUA_TVEC		// LUA-VEC
 
 #define NUM_TAGS	(LAST_TAG+1)
 
