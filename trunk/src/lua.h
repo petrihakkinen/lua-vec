@@ -155,6 +155,8 @@ LUA_API lua_CFunction   (lua_tocfunction) (lua_State *L, int idx);
 LUA_API void	       *(lua_touserdata) (lua_State *L, int idx);
 LUA_API lua_State      *(lua_tothread) (lua_State *L, int idx);
 LUA_API const void     *(lua_topointer) (lua_State *L, int idx);
+LUA_API const float    *(lua_tocvec) (lua_State *L, int idx); // LUA-VEC
+LUA_API float          *(lua_tovec) (lua_State *L, int idx);  // LUA-VEC
 
 
 /*
