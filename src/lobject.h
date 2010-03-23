@@ -17,7 +17,8 @@
 
 
 /* tags for values visible from Lua */
-#define LAST_TAG	LUA_TTHREAD
+//#define LAST_TAG	LUA_TTHREAD
+#define LAST_TAG	LUA_TVEC		// LUA-VEC
 
 #define NUM_TAGS	(LAST_TAG+1)
 
@@ -61,6 +62,7 @@ typedef union {
   void *p;
   lua_Number n;
   int b;
+	float vec[2];	// LUA-VEC
 } Value;
 
 
@@ -155,6 +157,9 @@ typedef struct lua_TValue {
     i_o->value.gc=cast(GCObject *, (x)); i_o->tt=LUA_TPROTO; \
     checkliveness(G(L),i_o); }
 
+// LUA-VEC
+#define setvecvalue(obj,x,y) \
+  { TValue *i_o=(obj); i_o->value.vec[0]=(x); i_o->value.vec[1]=(y); i_o->tt=LUA_TVEC; }
 
 
 
