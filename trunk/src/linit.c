@@ -26,6 +26,11 @@ static const luaL_Reg lualibs[] = {
   {NULL, NULL}
 };
 
+// LUA-VEC - test function for creating a new vec
+static int vec(lua_State *L) {
+	lua_pushvec(L, 1.0f, 2.0f);
+	return 1;
+}
 
 LUALIB_API void luaL_openlibs (lua_State *L) {
   const luaL_Reg *lib = lualibs;
@@ -34,5 +39,8 @@ LUALIB_API void luaL_openlibs (lua_State *L) {
     lua_pushstring(L, lib->name);
     lua_call(L, 1, 0);
   }
+	
+	// LUA-VEC
+	lua_register(L, "vec", vec);
 }
 
