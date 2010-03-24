@@ -33,6 +33,10 @@ LUALIB_API int (luaopen_string) (lua_State *L);
 #define LUA_MATHLIBNAME	"math"
 LUALIB_API int (luaopen_math) (lua_State *L);
 
+// LUA-VEC
+#define LUA_VECLIBNAME	"vec"
+LUALIB_API int (luaopen_vec) (lua_State *L);
+
 #define LUA_DBLIBNAME	"debug"
 LUALIB_API int (luaopen_debug) (lua_State *L);
 
