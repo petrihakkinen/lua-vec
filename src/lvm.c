@@ -108,7 +108,7 @@ static void callTM (lua_State *L, const TValue *f, const TValue *p1,
 void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
   int loop;
   for (loop = 0; loop < MAXTAGLOOP; loop++) {
-    const TValue *tm;
+    const TValue *tm = 0; /* LUA-VEC -- compiler gives a warning of uninitialized value on this so we set it to 0 */
     if (ttistable(t)) {  /* `t' is a table? */
       Table *h = hvalue(t);
       const TValue *res = luaH_get(h, key); /* do a primitive get */
@@ -118,6 +118,20 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
         return;
       }
       /* else will try the tag method */
+    }
+    else if (ttisvec(t)) { /* LUA-VEC -- vec[idx] operator */
+      if (ttisnumber(key)) {
+        /* the index is a number */
+        int          idx = (int) nvalue(key);
+        const float *vec = (const float *)vecvalue(t);  /* not safe, implement bound checking! */
+        TValue       res;
+        setnvalue(&res, vec[idx]);
+        setobj2s(L, val, &res);
+        /* what are the differences between these setobj, setobj2s, setobjs2s macros? */
+        return;
+      } else {
+        /* the index is not a number -- what happens here? */
+      }
     }
     else if (ttisnil(tm = luaT_gettmbyobj(L, t, TM_INDEX)))
       luaG_typeerror(L, t, "index");
