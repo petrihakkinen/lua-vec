@@ -34,23 +34,25 @@ static int vec (lua_State *L) {
 
 // LUA-VEC - getvec function
 static int getvec (lua_State *L) {
-  // Probably needs some more type checking
-  const float *vec = lua_tocvec(L, 1);
+  const float *vec = luaL_checkvec(L, 1);
   lua_Integer  idx = lua_tointeger(L, 2);
-  if (idx >= 0 && idx < 2)
-    lua_pushnumber(L, vec[idx]);
-  else
-    lua_pushnil(L);
+  luaL_argcheck(L, idx >= 1 && idx <= LUA_VEC_SIZE, 2, "invalid vector index");
+  lua_pushnumber(L, vec[idx-1]);
   return 1;
 }
 
 // LUA_VEC - setvec function
 static int setvec (lua_State *L) {
   // This function does not yet work as it should ...
+	// TODO: this can't be implemented as a normal function
+	// TODO: arguments are passed by value so changing the the value only changes the local copy in stack
+	/*
   float       *vec = lua_tovec(L, 1);
   lua_Integer  idx = lua_tointeger(L, 2);
   lua_Number   val = lua_tonumber(L, 3);
-  vec[idx] = val;
+  luaL_argcheck(L, idx >= 1 && idx <= LUA_VEC_SIZE, 2, "invalid vector index");
+  vec[idx-1] = val;
+	*/
   return 0;
 }
 
