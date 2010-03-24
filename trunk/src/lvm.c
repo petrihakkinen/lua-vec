@@ -120,18 +120,27 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
       /* else will try the tag method */
     }
     else if (ttisvec(t)) { /* LUA-VEC -- vec[idx] operator */
-      if (ttisnumber(key)) {
-        /* the index is a number */
-        int          idx = (int) nvalue(key);
-        const float *vec = (const float *)vecvalue(t);  /* not safe, implement bound checking! */
-        TValue       res;
-        setnvalue(&res, vec[idx]);
+      /* issue: "index" may not be the correct arg for luaG_typeerror in here */
+      if (ttisnumber(key) &&   /* acessing vec by a number? */
+          (nvalue(key) >= 1 && nvalue(key) <= 4)) {  /* index is between 1-4? */
+        TValue res;
+        setnvalue(&res, vecvalue(t)[(int)nvalue(key)-1]);
         setobj2s(L, val, &res);
-        /* what are the differences between these setobj, setobj2s, setobjs2s macros? */
         return;
-      } else {
-        /* the index is not a number -- what happens here? */
       }
+      else if (ttisstring(key)) {  /* acessing vec by a string? */
+        TValue res;  /* gives a warning about uninitialized res.tt */
+        switch (tsvalue(key)->hash) {
+          case 153:  setnvalue(&res, vecvalue(t)[0]); break;  /* x-component */
+          case 152:  setnvalue(&res, vecvalue(t)[1]); break;  /* y-component */
+          case 155:  setnvalue(&res, vecvalue(t)[2]); break;  /* z-component */
+          case 150:  setnvalue(&res, vecvalue(t)[3]); break;  /* w-component */
+          default:   luaG_typeerror(L, t, "index");
+        }
+        setobj2s(L, val, &res);
+        return;
+      }
+      luaG_typeerror(L, t, "index");
     }
     else if (ttisnil(tm = luaT_gettmbyobj(L, t, TM_INDEX)))
       luaG_typeerror(L, t, "index");
