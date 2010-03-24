@@ -309,7 +309,6 @@ void luaV_concat (lua_State *L, int total, int last) {
   } while (total > 1);  /* repeat until only 1 result left */
 }
 
-
 static void Arith (lua_State *L, StkId ra, const TValue *rb,
                    const TValue *rc, TMS op) {
   TValue tempb, tempc;
@@ -331,7 +330,6 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
   else if (!call_binTM(L, rb, rc, ra, op))
     luaG_aritherror(L, rb, rc);
 }
-
 
 
 /*
@@ -363,11 +361,14 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
         if (ttisnumber(rb) && ttisnumber(rc)) { \
           lua_Number nb = nvalue(rb), nc = nvalue(rc); \
           setnvalue(ra, op(nb, nc)); \
-        } \
-        else \
+        /* LUA-VEC - added add, sub and mul operators for 'vec op vec' case */ \
+        } else if (ttisvec(rb) && ttisvec(rc) && (tm==TM_ADD || tm==TM_SUB || TM_MUL)) { \
+				  const float* nb = vecvalue(rb); \
+          const float* nc = vecvalue(rc); \
+          setvecvalue(ra, op(nb[0], nc[0]), op(nb[1], nc[1])); \
+        } else \
           Protect(Arith(L, ra, rb, rc, tm)); \
       }
-
 
 
 void luaV_execute (lua_State *L, int nexeccalls) {
@@ -496,8 +497,10 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         if (ttisnumber(rb)) {
           lua_Number nb = nvalue(rb);
           setnvalue(ra, luai_numunm(nb));
-        }
-        else {
+        } else if (ttisvec(rb)) { /* LUA-VEC - added unary negate */
+          const float* nb = vecvalue(rb);
+          setvecvalue(ra, -nb[0], -nb[1]);
+        } else {
           Protect(Arith(L, ra, rb, rb, TM_UNM));
         }
         continue;
