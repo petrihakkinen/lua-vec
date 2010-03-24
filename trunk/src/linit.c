@@ -30,7 +30,9 @@ static const luaL_Reg lualibs[] = {
 static int vec (lua_State *L) {
 	float x = lua_tonumber(L, 1);
 	float y = lua_tonumber(L, 2);
-  lua_pushvec(L, x, y);
+	float z = lua_tonumber(L, 3);
+	float w = lua_tonumber(L, 4);
+  lua_pushvec(L, x, y, z, w);
   return 1;
 }
 

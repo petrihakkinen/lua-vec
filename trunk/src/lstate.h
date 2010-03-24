@@ -28,7 +28,8 @@ struct lua_longjmp;  /* defined in ldo.c */
 /* extra stack space to handle TM calls and some other extras */
 #define EXTRA_STACK   5
 
-
+/* LUA-VEC TODO: what is this?
+** this sounds suspiciously like basic data type size in memory. Should it be increased to 16? */
 #define BASIC_CI_SIZE           8
 
 #define BASIC_STACK_SIZE        (2*LUA_MINSTACK)

@@ -379,7 +379,7 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
         } else if (ttisvec(rb) && ttisvec(rc) && (tm==TM_ADD || tm==TM_SUB || TM_MUL)) { \
 				  const float* nb = vecvalue(rb); \
           const float* nc = vecvalue(rc); \
-          setvecvalue(ra, op(nb[0], nc[0]), op(nb[1], nc[1])); \
+          setvecvalue(ra, op(nb[0], nc[0]), op(nb[1], nc[1]), op(nb[2], nc[2]), op(nb[3], nc[3])); \
         } else \
           Protect(Arith(L, ra, rb, rc, tm)); \
       }
@@ -513,7 +513,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
           setnvalue(ra, luai_numunm(nb));
         } else if (ttisvec(rb)) { /* LUA-VEC - added unary negate */
           const float* nb = vecvalue(rb);
-          setvecvalue(ra, -nb[0], -nb[1]);
+          setvecvalue(ra, -nb[0], -nb[1], -nb[2], -nb[3]);
         } else {
           Protect(Arith(L, ra, rb, rb, TM_UNM));
         }
