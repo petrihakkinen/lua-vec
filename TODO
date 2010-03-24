@@ -1,7 +1,4 @@
 Next steps:
-- tostring support, i.e.
-  'print(vec(1,2))' should output 'vec(1, 2)'
-- extend vec to 4 components (sizeof Value changes from 8 to 16 bytes, does it break Lua?) 
 - implement vector indexing operators (VM side), e.g. v[1] returns the x component
 - implement vector mutators, e.g v[1] sets x to 1
 
@@ -21,4 +18,5 @@ Issues:
 - should luaO_rawequalObj() in lobject.c have a case for LUA_TVEC?
 - binary compatibility with standard lua? type indices have changed, so binaries compiled with
   standard luac probably don't work with lua-vec interpreter
-  
+- the following define in lstate.h sounds a bit suspicious: #define BASIC_CI_SIZE 8
+  if it is the max size of basic data types we should increase it to 16 (4xfloat = 16 bytes)
