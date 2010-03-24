@@ -376,10 +376,21 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
           lua_Number nb = nvalue(rb), nc = nvalue(rc); \
           setnvalue(ra, op(nb, nc)); \
         /* LUA-VEC - added add, sub and mul operators for 'vec op vec' case */ \
-        } else if (ttisvec(rb) && ttisvec(rc) && (tm==TM_ADD || tm==TM_SUB || TM_MUL)) { \
+        } else if (ttisvec(rb) && ttisvec(rc) && (tm==TM_ADD || tm==TM_SUB || tm==TM_MUL)) { \
+          /* vector add/sub/mul vector */ \
 				  const float* nb = vecvalue(rb); \
           const float* nc = vecvalue(rc); \
           setvecvalue(ra, op(nb[0], nc[0]), op(nb[1], nc[1]), op(nb[2], nc[2]), op(nb[3], nc[3])); \
+        } else if (ttisvec(rb) && ttisnumber(rc) && (tm==TM_MUL || tm==TM_DIV)) { \
+          /* vector mul/div scalar */ \
+          const float* nb = vecvalue(rb); \
+          lua_Number nc = nvalue(rc); \
+          setvecvalue(ra, op(nb[0], nc), op(nb[1], nc), op(nb[2], nc), op(nb[3], nc)); \
+        } else if (ttisnumber(rb) && ttisvec(rc) && tm==TM_MUL) { \
+          /* scalar mul vector */ \
+          lua_Number nb = nvalue(rb); \
+          const float* nc = vecvalue(rc); \
+          setvecvalue(ra, op(nb, nc[0]), op(nb, nc[1]), op(nb, nc[2]), op(nb, nc[3])); \
         } else \
           Protect(Arith(L, ra, rb, rc, tm)); \
       }
