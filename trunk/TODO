@@ -3,7 +3,7 @@ Next steps:
   'print(vec(1,2))' should output 'vec(1, 2)'
 - extend vec to 4 components (sizeof Value changes from 8 to 16 bytes, does it break Lua?) 
 - implement vector indexing operators (VM side), e.g. v[1] returns the x component
-- implement vector mutators, e.g 1 sets x to 1
+- implement vector mutators, e.g v[1] sets x to 1
 
 Syntactic sugar & convenience:
 - dot3(), dot4(), cross(), normalize()
@@ -16,3 +16,9 @@ Clean up:
 - should lua_tovec() always return 'const float*' ? (remove lua_tocvec()?)
   do we ever need to change locals? probably not...
 - 'const float*' -> 'lua_Vec' ?
+
+Issues:
+- should luaO_rawequalObj() in lobject.c have a case for LUA_TVEC?
+- binary compatibility with standard lua? type indices have changed, so binaries compiled with
+  standard luac probably don't work with lua-vec interpreter
+  
