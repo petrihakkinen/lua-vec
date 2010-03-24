@@ -28,7 +28,9 @@ static const luaL_Reg lualibs[] = {
 
 // LUA-VEC - test function for creating a new vec
 static int vec (lua_State *L) {
-  lua_pushvec(L, 1.0f, 2.0f);
+	float x = lua_tonumber(L, 1);
+	float y = lua_tonumber(L, 2);
+  lua_pushvec(L, x, y);
   return 1;
 }
 
