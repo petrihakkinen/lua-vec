@@ -30,7 +30,6 @@
 #define LUA_TUPVAL	(LAST_TAG+2)
 #define LUA_TDEADKEY	(LAST_TAG+3)
 
-
 /*
 ** Union of all collectable objects
 */
@@ -62,7 +61,7 @@ typedef union {
   void *p;
   lua_Number n;
   int b;
-  float vec[2]; // LUA-VEC
+  float vec[LUA_VEC_SIZE]; // LUA-VEC
 } Value;
 
 

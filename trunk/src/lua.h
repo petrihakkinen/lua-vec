@@ -81,10 +81,10 @@ typedef void * (*lua_Alloc) (void *ud, void *ptr, size_t osize, size_t nsize);
 #define LUA_TFUNCTION		7 // 6     LUA-VEC
 #define LUA_TUSERDATA		8 // 7     LUA-VEC
 #define LUA_TTHREAD		9 // 8     LUA-VEC
-//#define LUA_TVEC		9	// LUA-VEC
 
 
-
+/* LUA_VEC - Number of components in a vec */
+#define LUA_VEC_SIZE	2
 
 /* minimum Lua stack available to a C function */
 #define LUA_MINSTACK	20
