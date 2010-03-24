@@ -3,8 +3,6 @@ Next steps:
 - implement vector mutators, e.g v[1] sets x to 1
 
 Syntactic sugar & convenience:
-- dot3(), dot4(), cross(), normalize()
-- implement missing operators: vec*scalar, vec/scalar
 - component accessors, e.g. v.x
 - implement objlen for vectors? #v should return 4?
 
