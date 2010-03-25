@@ -15,10 +15,10 @@
 #include "lualib.h"
 
 static int vec_new (lua_State *L) {
-	float x = lua_tonumber(L, 1);
-	float y = lua_tonumber(L, 2);
-	float z = lua_tonumber(L, 3);
-	float w = lua_tonumber(L, 4);
+  float x = lua_tonumber(L, 1);
+  float y = lua_tonumber(L, 2);
+  float z = lua_tonumber(L, 3);
+  float w = lua_tonumber(L, 4);
   lua_pushvec(L, x, y, z, w);
   return 1;
 }
