@@ -169,6 +169,12 @@ void luaV_settable (lua_State *L, const TValue *t, TValue *key, StkId val) {
       }
       /* else will try the tag method */
     }
+	/* LUA-VEC */
+	else if (ttisvec(t)) {
+      /* TODO: implement properly -- this is just for testing write back from reg to global */
+      ((TValue*)t)->value.vec[0] = 123.0f;
+      return;
+	}
     else if (ttisnil(tm = luaT_gettmbyobj(L, t, TM_NEWINDEX)))
       luaG_typeerror(L, t, "index");
     if (ttisfunction(tm)) {
@@ -389,17 +395,17 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
           /* vector add/sub/mul vector */ \
 				  const float* nb = vecvalue(rb); \
           const float* nc = vecvalue(rc); \
-          setvecvalue(ra, op(nb[0], nc[0]), op(nb[1], nc[1]), op(nb[2], nc[2]), op(nb[3], nc[3])); \
+          setvecvalue(ra, (float)op(nb[0], nc[0]), (float)op(nb[1], nc[1]), (float)op(nb[2], nc[2]), (float)op(nb[3], nc[3])); \
         } else if (ttisvec(rb) && ttisnumber(rc) && (tm==TM_MUL || tm==TM_DIV)) { \
           /* vector mul/div scalar */ \
           const float* nb = vecvalue(rb); \
           lua_Number nc = nvalue(rc); \
-          setvecvalue(ra, op(nb[0], nc), op(nb[1], nc), op(nb[2], nc), op(nb[3], nc)); \
+          setvecvalue(ra, (float)op(nb[0], nc), (float)op(nb[1], nc), (float)op(nb[2], nc), (float)op(nb[3], nc)); \
         } else if (ttisnumber(rb) && ttisvec(rc) && tm==TM_MUL) { \
           /* scalar mul vector */ \
           lua_Number nb = nvalue(rb); \
           const float* nc = vecvalue(rc); \
-          setvecvalue(ra, op(nb, nc[0]), op(nb, nc[1]), op(nb, nc[2]), op(nb, nc[3])); \
+          setvecvalue(ra, (float)op(nb, nc[0]), (float)op(nb, nc[1]), (float)op(nb, nc[2]), (float)op(nb, nc[3])); \
         } else \
           Protect(Arith(L, ra, rb, rc, tm)); \
       }
