@@ -489,6 +489,30 @@ void luaK_storevar (FuncState *fs, expdesc *var, expdesc *ex) {
     case VINDEXED: {
       int e = luaK_exp2RK(fs, ex);
       luaK_codeABC(fs, OP_SETTABLE, var->u.s.info, var->u.s.aux, e);
+
+	  /*
+	  attempt to write back result from register to global...
+
+	  0 = (hardcoded) register where the modified vector is in
+	  var->u.s.info = name of the global to set; the vector just passed to OP_SETTABLE as arg A
+
+	  works for: 'a=vec.zero; a[1]=1; print(a)'
+
+	  Problems:
+
+	  1) the value is not always in register 0
+
+	  2) fails for 'A[k] = b' where A is not a global var (e.g. 'vec.zero[1] = 1' or 'vec.new()[1] = 1')
+         these cases are meaningless (is this always true?) so they should be skipped
+		 can we somehow determine that 'expdesc *var' is a global? mark it in luaK_dischargevars()?
+
+	  3) are the instructions always processed in order? is our OP_SETGLOBAL always preceeded by OP_SETTABLE?
+
+	  4) only vector values should be written back
+	     Extend VM with OP_WRITEBACKVEC, a special version of OP_SETGLOBAL which is skipped by VM if operand is not a vec?
+	  */
+	 
+	  /*luaK_codeABx(fs, OP_SETGLOBAL, 0, var->u.s.info );*/
       break;
     }
     default: {
