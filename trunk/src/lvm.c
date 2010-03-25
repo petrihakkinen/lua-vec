@@ -561,6 +561,11 @@ void luaV_execute (lua_State *L, int nexeccalls) {
             setnvalue(ra, cast_num(tsvalue(rb)->len));
             break;
           }
+          /* LUA-VEC -- #vec operator */
+          case LUA_TVEC: {
+            setnvalue(ra, 4);
+            break;
+          }
           default: {  /* try metamethod */
             Protect(
               if (!call_binTM(L, rb, luaO_nilobject, ra, TM_LEN))
