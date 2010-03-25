@@ -1,13 +1,10 @@
 Next steps:
-- implement vector indexing operators (VM side), e.g. v[1] returns the x component
-- implement vector mutators, e.g v[1] sets x to 1
+- implement vector mutators, e.g 'v[1] = 1' sets x to 1
 
 Syntactic sugar & convenience:
-- component accessors, e.g. v.x
 - implement objlen for vectors? #v should return 4?
 
 Clean up:
-- move all new functions to math module
 - should lua_tovec() always return 'const float*' ? (remove lua_tocvec()?)
   do we ever need to change locals? probably not...
 - 'const float*' -> 'lua_Vec' ?
