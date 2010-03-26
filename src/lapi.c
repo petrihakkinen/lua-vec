@@ -413,12 +413,7 @@ LUA_API const void *lua_topointer (lua_State *L, int idx) {
 
 
 // LUA-VEC
-LUA_API const float *lua_tocvec (lua_State *L, int idx) {
-  StkId o = index2adr(L, idx);
-  return (!ttisvec(o)) ? NULL : vecvalue(o);
-}
-
-LUA_API float *lua_tovec (lua_State *L, int idx) {
+LUA_API const float *lua_tovec (lua_State *L, int idx) {
   StkId o = index2adr(L, idx);
   return (!ttisvec(o)) ? NULL : vecvalue(o);
 }

@@ -1,5 +1,4 @@
 Next:
-- remove lua_tocvec(); lua_tovec() should always return 'const float*' [Henri]
 - benchmark [Pete]
 
 Cleanup:

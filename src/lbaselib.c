@@ -413,7 +413,7 @@ static int luaB_tostring (lua_State *L) {
       // LUA-VEC
     case LUA_TVEC:
       {
-        const float* v = lua_tocvec(L, 1);
+        const float* v = lua_tovec(L, 1);
         lua_pushfstring(L, "vec(%f, %f, %f, %f)", v[0], v[1], v[2], v[3]); 
       }
       break;
