@@ -169,12 +169,6 @@ void luaV_settable (lua_State *L, const TValue *t, TValue *key, StkId val) {
       }
       /* else will try the tag method */
     }
-	/* LUA-VEC */
-	else if (ttisvec(t)) {
-      /* TODO: implement properly -- this is just for testing write back from reg to global */
-      ((TValue*)t)->value.vec[0] = 123.0f;
-      return;
-	}
     else if (ttisnil(tm = luaT_gettmbyobj(L, t, TM_NEWINDEX)))
       luaG_typeerror(L, t, "index");
     if (ttisfunction(tm)) {
