@@ -51,7 +51,7 @@ static int gcvec_dot (lua_State *L) {
 static int gcvec_cross (lua_State *L) {
   const vec_t* v1 = checkvec(L, 1);
   const vec_t* v2 = checkvec(L, 2);
-  lua_pushvec(L, v1->y * v2->z - v1->z * v2->y, v1->z * v2->x - v1->x * v2->z, v1->x * v2->y - v1->y * v2->x, 0.0f);
+  new_vec(L, v1->y * v2->z - v1->z * v2->y, v1->z * v2->x - v1->x * v2->z, v1->x * v2->y - v1->y * v2->x, 0.0f);
   return 1;
 }
 
@@ -64,7 +64,7 @@ static int gcvec_length (lua_State *L) {
 static int gcvec_normalize (lua_State *L) {
   const vec_t* v = checkvec(L, 1);
   float s = 1.0f / sqrt(v->x*v->x + v->y*v->y + v->z*v->z + v->w*v->w);
-  lua_pushvec(L, v->x*s, v->y*s, v->z*s, v->w*s);
+  new_vec(L, v->x*s, v->y*s, v->z*s, v->w*s);
   return 1;
 }
 
@@ -179,9 +179,9 @@ LUALIB_API int luaopen_gcvec (lua_State *L) {
   luaL_register(L, LUA_GCVECLIBNAME, gcveclib_f);
   
   // numeric constants
-  lua_pushvec(L, 0, 0, 0, 0);
+  new_vec(L, 0, 0, 0, 0);
   lua_setfield(L, -2, "zero");
-  lua_pushvec(L, 1, 1, 1, 1);
+  new_vec(L, 1, 1, 1, 1);
   lua_setfield(L, -2, "one");
   return 1;
 }
