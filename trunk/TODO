@@ -1,5 +1,4 @@
 Next:
-- swizzles (v.xyzw, v.xywz, v.xxxy, v.xzy, v.wz, etc.) [Henri]
 - remove lua_tocvec(); lua_tovec() should always return 'const float*' [Henri]
 - benchmark [Pete]
 

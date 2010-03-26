@@ -129,16 +129,37 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
         return;
       }
       else if (ttisstring(key)) {  /* acessing vec by a string? */
-        TValue res;  /* gives a warning about uninitialized res.tt */
-        switch (tsvalue(key)->hash) {
-          case 153:  setnvalue(&res, vecvalue(t)[0]); break;  /* x-component */
-          case 152:  setnvalue(&res, vecvalue(t)[1]); break;  /* y-component */
-          case 155:  setnvalue(&res, vecvalue(t)[2]); break;  /* z-component */
-          case 150:  setnvalue(&res, vecvalue(t)[3]); break;  /* w-component */
-          default:   luaG_typeerror(L, t, "index");
+        if (tsvalue(key)->len == 1) {
+          /* accessing by a single component, such as vec.x */
+          TValue res;
+          switch (*getstr(tsvalue(key))) {
+            case 'x':  setnvalue(&res, vecvalue(t)[0]); break;
+            case 'y':  setnvalue(&res, vecvalue(t)[1]); break;
+            case 'z':  setnvalue(&res, vecvalue(t)[2]); break;
+            case 'w':  setnvalue(&res, vecvalue(t)[3]); break;
+            default:   luaG_typeerror(L, t, "index");
+          }
+          setobj2s(L, val, &res);
+          return;
         }
-        setobj2s(L, val, &res);
-        return;
+        else if (tsvalue(key)->len <= 4) {
+          /* accessing by swizzling, such as vec.xy, vec.xxyz etc. */
+          TValue res;
+          float v[4] = {0.0f,0.0f,0.0f,0.0f};
+          int i;
+          for (i = 0; i < tsvalue(key)->len; ++i) {
+            switch (getstr(tsvalue(key))[i]) {
+              case 'x':  v[i] = vecvalue(t)[0]; break;
+              case 'y':  v[i] = vecvalue(t)[1]; break;
+              case 'z':  v[i] = vecvalue(t)[2]; break;
+              case 'w':  v[i] = vecvalue(t)[3]; break;
+              default:   luaG_typeerror(L, t, "index");
+            }
+          }
+          setvecvalue(&res, v[0], v[1], v[2], v[3]);
+          setobj2s(L, val, &res);
+          return;
+        }
       }
       luaG_typeerror(L, t, "index");
     }
