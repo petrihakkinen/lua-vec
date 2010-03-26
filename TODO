@@ -1,13 +1,12 @@
-Next steps:
-- implement vector mutators, e.g 'v[1] = 1' sets x to 1
+Next:
+- swizzles (v.xyzw, v.xywz, v.xxxy, v.xzy, v.wz, etc.) [Henri]
+- remove lua_tocvec(); lua_tovec() should always return 'const float*' [Henri]
+- cleanup mutator test code [Pete]
+- cleanup math lib [Pete]
+- benchmark [Pete]
 
-Syntactic sugar & convenience:
-- implement objlen for vectors? #v should return 4?
-
-Clean up:
-- should lua_tovec() always return 'const float*' ? (remove lua_tocvec()?)
-  do we ever need to change locals? probably not...
-- 'const float*' -> 'lua_Vec' ?
+Cleanup:
+- 'const float*[4]' -> 'lua_Vec' ?
 
 Issues:
 - should luaO_rawequalObj() in lobject.c have a case for LUA_TVEC?
