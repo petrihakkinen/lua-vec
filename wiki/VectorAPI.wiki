@@ -5,9 +5,9 @@
 Once created, vectors are immutable. Vector elements may be accessed either by an index or by a string. For example
 {{{
 v = vec.new(1, 2, 3, 4)
-print(v[1])   -- returns 1
-print(v["y"]) -- returns 2
-print(v.z)    -- returns 3
+v[1]   -- returns 1
+v["y"] -- returns 2
+v.z    -- returns 3
 }}}
 
 New vectors can also be created by _swizzling_. For example
