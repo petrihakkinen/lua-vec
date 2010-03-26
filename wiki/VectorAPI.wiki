@@ -24,7 +24,7 @@ The vector module brings the following new functions into Lua.
 
  * *vec.new(x, y, z, w)*: Returns a new vector initialized with the given elements.
  * *vec.dot(a, b)*: Returns the dot product of two given vectors.
- * *vec.cross(a, b)*: Returns the cross prodict of two given vectors.
+ * *vec.cross(a, b)*: Returns the cross product of two given vectors.
  * *vec.length(v)*: Returns the length of the given vector.
  * *vec.normalize(v)*: Returns the normalized vector of the given vector.
 
