@@ -21,78 +21,55 @@ output_width = 1024/8
 output_height = 768/8
 num_samples = 4
 
-use_native_vec = false
+-- lua vec impl
 
--- vec
+luavec = {}
 
-function lua_vec(x, y, z)
-	local v = { x or 0, y or 0, z or 0 }
+function luavec.new(x, y, z, w)
+	local v = { x or 0, y or 0, z or 0, w or 0 }
 	setmetatable(v, mt)
 	return v
 end
 
-function lua_add(v1, v2)
-	return lua_vec(v1[1] + v2[1], v1[2] + v2[2], v1[3] + v2[3])
+function luavec.normalize(v)
+	local s = 1.0 / math.sqrt(v[1]*v[1] + v[2]*v[2] + v[3]*v[3] + v[4]*v[4]);
+	return luavec.new(v[1]*s, v[2]*s, v[3]*s, v[4]*s)
 end
 
-function lua_sub(v1, v2)
-	return lua_vec(v1[1] - v2[1], v1[2] - v2[2], v1[3] - v2[3])
-end
-
-function lua_mul(v1, v2)
-	return lua_vec(v1[1] * v2[1], v1[2] * v2[2], v1[3] * v2[3])
-end
-
-function lua_muls(v, f)
-	return lua_vec(v[1] * f, v[2] * f, v[3] * f)
-end
-
-function lua_negate(v)
-	return lua_vec(-v[1], -v[2], -v[3])
-end
-
-function lua_normalize(v)
-	return lua_muls(v, 1.0 / math.sqrt(v[1]*v[1] + v[2]*v[2] + v[3]*v[3]))
-end
-
-function lua_dot(v1, v2)
+function luavec.dot(v1, v2)
 	return v1[1] * v2[1] + v1[2] * v2[2] + v1[3] * v2[3]
 end
 
-function lua_cross(v1, v2)
-	return lua_vec(v1[2] * v2[3] - v1[3] * v2[2], v1[3] * v2[1] - v1[1] * v2[3], v1[1] * v2[2] - v1[2] * v2[1])
+function luavec.cross(v1, v2)
+	return luavec.new(v1[2] * v2[3] - v1[3] * v2[2], v1[3] * v2[1] - v1[1] * v2[3], v1[1] * v2[2] - v1[2] * v2[1])
 end
 
 -- operator overloading
 mt = {}
-mt.__add = lua_add
-mt.__sub = lua_sub
+mt.__add = function(v1, v2) return luavec.new(v1[1] + v2[1], v1[2] + v2[2], v1[3] + v2[3], v1[4] + v2[4]) end
+mt.__sub = function(v1, v2) return luavec.new(v1[1] - v2[1], v1[2] - v2[2], v1[3] - v2[3], v1[4] - v2[4]) end
 
-mt.__mul = function(a, b)
-	local s = tonumber(b)
+mt.__mul = function(v1, v2)
+	local s = tonumber(v2)
 	if s then
-		return lua_muls(a, b)	-- vector * scalar
+		-- vector * scalar
+		return luavec.new(v1[1] * s, v1[2] * s, v1[3] * s, v1[4] * s)
 	else
-		return lua_mul(a, b)	-- vector * vector
+		-- vector * vector
+		return luavec.new(v1[1] * v2[1], v1[2] * v2[2], v1[3] * v2[3], v1[4] * v2[4])
 	end
 end
 
-mt.__unm = lua_negate
+mt.__unm = function(v) return luavec.new(-v[1], -v[2], -v[3], -v[4]) end
 
-if use_native_vec then
-	-- using native vec
-	local veclib = vec
-	vec = veclib.new
-	dot = veclib.dot3
-	cross = veclib.cross
-	normalize = veclib.normalize3
-else
-	-- using lua vec
-	vec = lua_vec
-	normalize = lua_normalize
-	cross = lua_cross
-	dot = lua_dot
-end
+-- select vec lib to use
+--local veclib = luavec
+--local veclib = vec
+local veclib = gcvec
+newvec = veclib.new
+dot = veclib.dot
+cross = veclib.cross
+normalize = veclib.normalize
 
 -- material types
 DIFF = 1
@@ -110,7 +87,8 @@ end
 function intersect(ray, sphere)
 	-- Solve t^2*d.d + 2*t*(o-p).d + (o-p).(o-p)-R^2 = 0
 	local op = sphere.p - ray.o
-	local eps = 1e-4
+	--local eps = 1e-4
+	local eps = 5e-2
 	local b = dot(op, ray.d)
 	local det = b * b - dot(op, op) + sphere.rad * sphere.rad
 	
@@ -130,15 +108,15 @@ end
 -- scene: radius, position, emission, color, material
 spheres = 
 {
-	sphere(1e5,  vec( 1e5+1, 40.8, 81.6),  vec(),			vec(.75, .25, .25),    DIFF), -- Left
-	sphere(1e5,  vec(-1e5+99, 40.8, 81.6), vec(),			vec(.25, .25, .75),    DIFF), -- Rght
-	sphere(1e5,  vec(50, 40.8, 1e5),       vec(),			vec(.75, .75, .75),    DIFF), -- Back
-	sphere(1e5,  vec(50, 40.8, -1e5+170),  vec(),			vec(),                 DIFF), -- Frnt
-	sphere(1e5,  vec(50,  1e5, 81.6),      vec(),			vec(.75, .75, .75),    DIFF), -- Botm
-	sphere(1e5,  vec(50, -1e5+81.6, 81.6), vec(),			vec(.75, .75, .75),    DIFF), -- Top
-	sphere(16.5, vec(27, 16.5, 47),        vec(),			vec(.999, .999, .999), SPEC), -- Mirr
---	sphere(16.5, vec(73, 16.5, 78),        vec(), 			vec(.999, .999, .999), REFR), -- Glas
-	sphere(600,  vec(50, 681.6-0.27, 81.6), vec(12,12,12), 	vec(),                 DIFF)  -- Lite
+	sphere(1e5,  newvec( 1e5+1, 40.8, 81.6),  newvec(),			newvec(.75, .25, .25),    DIFF), -- Left
+	sphere(1e5,  newvec(-1e5+99, 40.8, 81.6), newvec(),			newvec(.25, .25, .75),    DIFF), -- Rght
+	sphere(1e5,  newvec(50, 40.8, 1e5),       newvec(),			newvec(.75, .75, .75),    DIFF), -- Back
+	sphere(1e5,  newvec(50, 40.8, -1e5+170),  newvec(),			newvec(),                 DIFF), -- Frnt
+	sphere(1e5,  newvec(50,  1e5, 81.6),      newvec(),			newvec(.75, .75, .75),    DIFF), -- Botm
+	sphere(1e5,  newvec(50, -1e5+81.6, 81.6), newvec(),			newvec(.75, .75, .75),    DIFF), -- Top
+	sphere(16.5, newvec(27, 16.5, 47),        newvec(),			newvec(.999, .999, .999), SPEC), -- Mirr
+--	sphere(16.5, newvec(73, 16.5, 78),        newvec(), 		newvec(.999, .999, .999), REFR), -- Glas
+	sphere(600,  newvec(50, 681.6-0.27, 81.6), newvec(12,12,12), newvec(),                 DIFF)  -- Lite
 }
 
 function clamp(x)
@@ -175,7 +153,7 @@ function radiance(r, depth)
 	local hit, t, id
 	
 	hit, t, id = intersect_scene(r, t, id)
-	if hit == false then return vec(0, 0, 0) end
+	if hit == false then return newvec(0, 0, 0) end
 	
 	local obj = spheres[id]
 	
@@ -207,9 +185,9 @@ function radiance(r, depth)
 		
 		local u
 		if math.abs(w[1]) > 0.1 then
-			u = vec(0, 1, 0)
+			u = newvec(0, 1, 0)
 		else
-			u = vec(1, 0, 0)
+			u = newvec(1, 0, 0)
 		end
 		u = normalize(cross(u, w))
 		
@@ -223,7 +201,7 @@ function radiance(r, depth)
 	end
 	
 	-- refraction not implemented!!
-	return vec()
+	return newvec()
 end
 
 function smallpt()
@@ -231,13 +209,13 @@ function smallpt()
 	local h = output_height
 	local samps = num_samples 
 	
-	local cam = ray(vec(50, 52, 295.6), normalize(vec(0, -0.042612, -1))); -- cam pos, dir
-	local cx = vec(w * 0.5135 / h)
+	local cam = ray(newvec(50, 52, 295.6), normalize(newvec(0, -0.042612, -1))); -- cam pos, dir
+	local cx = newvec(w * 0.5135 / h)
 	local cy = normalize(cross(cx, cam.d)) * 0.5135
 	local c = { }
 		
 	-- prealloc array
-	for i=1,w*h do c[i]Ê= true end
+	for i=1,w*h do c[i]= true end
 	
 	print("Tracing...")
 	
@@ -249,12 +227,12 @@ function smallpt()
 		for x = 1,w do
 					
 			local i = x + ((h-1)-(y-1)) * w;
-			c[i] = vec()
+			c[i] = newvec()
 			
 			for sy = 1,2 do
 				for sx = 1,2 do
 		
-					local r = vec()
+					local r = newvec()
 		
 					for s = 1,samps do
 						local r1 = 2 * math.random()
@@ -272,7 +250,7 @@ function smallpt()
 						r = r + rad * (1.0 / samps)
 					end
 					
-					c[i] = c[i] + vec(clamp(r[1]), clamp(r[2]), clamp(r[3])) * 0.25
+					c[i] = c[i] + newvec(clamp(r[1]), clamp(r[2]), clamp(r[3])) * 0.25
 				end
 			end
 		end
