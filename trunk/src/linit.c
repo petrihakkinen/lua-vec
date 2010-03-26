@@ -22,6 +22,7 @@ static const luaL_Reg lualibs[] = {
   {LUA_STRLIBNAME, luaopen_string},
   {LUA_MATHLIBNAME, luaopen_math},
   {LUA_VECLIBNAME, luaopen_vec},
+  {LUA_GCVECLIBNAME, luaopen_gcvec},
   {LUA_DBLIBNAME, luaopen_debug},
   {NULL, NULL}
 };
