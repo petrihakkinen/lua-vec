@@ -1,3 +1,5 @@
+#summary Benchmarks
+
 =Benchmarking Results=
 
 === smallpt.lua ===
