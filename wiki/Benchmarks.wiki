@@ -2,14 +2,15 @@
 
 =Benchmarking Results=
 
-=== smallpt.lua ===
+=== smallpt.lua, 256x192, 8*4 samples ===
 
-|| Implementation || Time || Notes ||
+|| *Implementation* || *Time* || *Notes* ||
 || std lua || 1217s || standard lua with vectors implemented in lua (see below for source code) ||
 || gcvec || 770s || standard lua + C vector module (garbage collected userdata) ||
 || lua-vec || 274s || lua with vectors (our implementation) ||
 || luajit || na || ||
-|| luajit+lua-vec || na || ||
+|| luajit+lua-vec || ??? || ||
+|| cpp || na || Full C++ implementation of smallpt ||
 
 ===Lua vector implementation ===
 
