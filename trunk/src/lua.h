@@ -369,7 +369,7 @@ struct lua_Debug {
 
 /******************************************************************************
 * Copyright (C) 1994-2008 Lua.org, PUC-Rio.  All rights reserved.
-* Copyright (C) 2010 Lua-vec extension, Henri Häkkinen and Petri Häkkinen.
+* Lua-vec Extension Copyright (C) 2010 Petri Häkkinen and Henri Häkkinen.
 *
 * Permission is hereby granted, free of charge, to any person obtaining
 * a copy of this software and associated documentation files (the
