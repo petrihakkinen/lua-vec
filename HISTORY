@@ -1,5 +1,13 @@
 HISTORY for Lua 5.1
 
+* Lua-vec vector extension
+  ------------------------
+  Language:
+  + native vector datatype
+  + vector math module
+  API:
+  + new functions: lua_tovec, lua_pushvec, lua_isvec
+
 * Changes from version 5.0 to 5.1
   -------------------------------
   Language:
