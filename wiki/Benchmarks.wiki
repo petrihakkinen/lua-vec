@@ -16,7 +16,7 @@ Here are the results (smaller rendering times are better):
 || luajit+lua-vec || ??? || ||
 || cpp || 10s || Full C++ implementation of smallpt ||
 
-As can be seen lua-vec is almost 4.5 times faster than standard lua. Lua-vec also clearly beats a userdata implementation, and is even qute near to LuaJIT's performance. Full C++ implementation is still an order of magnitude faster. LuaJIT's performance (which obviously uses vectors implemented in Lua) is probably totally bottlenecked by garbage collection.
+As can be seen lua-vec is almost 4.5 times faster than standard lua. Lua-vec also clearly beats a userdata implementation, and is even quite near to LuaJIT's performance. Full C++ implementation is still an order of magnitude faster. LuaJIT's performance (which obviously uses vectors implemented in Lua) is probably totally bottlenecked by garbage collection.
 
 ===Lua vector implementation ===
 
