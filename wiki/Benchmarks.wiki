@@ -10,7 +10,7 @@
 || lua-vec || 274s || lua with vectors (our implementation) ||
 || luajit || na || ||
 || luajit+lua-vec || ??? || ||
-|| cpp || na || Full C++ implementation of smallpt ||
+|| cpp || 10s || Full C++ implementation of smallpt ||
 
 ===Lua vector implementation ===
 
