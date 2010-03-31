@@ -1,71 +1,117 @@
 --[[
 
-128x96, 10*4 samples:
-lua 		1353s
-lua jit	    142s
-cpp 		8s
+smallpt.lua
+Copyright (C) 2010 Petri HŠkkinen
 
-128x96, 4*4 samples:
-lua			135.1s
-lua-vec		48.3s    INCORRECT RESULT!
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+Original smallpt copyright notice:
+
+Copyright (c) 2006-2008 Kevin Beason (kevin.beason@gmail.com)
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --]]
 
---[[
+
+-- output resolution and number of samples
 output_width = 1024/4
 output_height = 768/4
-num_samples = 10
---]]
+num_samples = 8
 
-output_width = 1024/8
-output_height = 768/8
-num_samples = 4
+-- vec lib to use
+veclib = "stdlua"     -- standard lua without extensions
+--veclib = "gcvec"    -- garbage collected userdata vectors
+--veclib = "luavec"   -- lua-vec vectors
 
--- lua vec impl
+-- std lua vec impl
 
-luavec = {}
+stdlua = {}
 
-function luavec.new(x, y, z, w)
+function stdlua.new(x, y, z, w)
 	local v = { x or 0, y or 0, z or 0, w or 0 }
 	setmetatable(v, mt)
 	return v
 end
 
-function luavec.normalize(v)
+function stdlua.normalize(v)
 	local s = 1.0 / math.sqrt(v[1]*v[1] + v[2]*v[2] + v[3]*v[3] + v[4]*v[4]);
-	return luavec.new(v[1]*s, v[2]*s, v[3]*s, v[4]*s)
+	return stdlua.new(v[1]*s, v[2]*s, v[3]*s, v[4]*s)
 end
 
-function luavec.dot(v1, v2)
+function stdlua.dot(v1, v2)
 	return v1[1] * v2[1] + v1[2] * v2[2] + v1[3] * v2[3]
 end
 
-function luavec.cross(v1, v2)
-	return luavec.new(v1[2] * v2[3] - v1[3] * v2[2], v1[3] * v2[1] - v1[1] * v2[3], v1[1] * v2[2] - v1[2] * v2[1])
+function stdlua.cross(v1, v2)
+	return stdlua.new(v1[2] * v2[3] - v1[3] * v2[2], v1[3] * v2[1] - v1[1] * v2[3], v1[1] * v2[2] - v1[2] * v2[1])
 end
 
 -- operator overloading
 mt = {}
-mt.__add = function(v1, v2) return luavec.new(v1[1] + v2[1], v1[2] + v2[2], v1[3] + v2[3], v1[4] + v2[4]) end
-mt.__sub = function(v1, v2) return luavec.new(v1[1] - v2[1], v1[2] - v2[2], v1[3] - v2[3], v1[4] - v2[4]) end
+mt.__add = function(v1, v2) return stdlua.new(v1[1] + v2[1], v1[2] + v2[2], v1[3] + v2[3], v1[4] + v2[4]) end
+mt.__sub = function(v1, v2) return stdlua.new(v1[1] - v2[1], v1[2] - v2[2], v1[3] - v2[3], v1[4] - v2[4]) end
 
 mt.__mul = function(v1, v2)
 	local s = tonumber(v2)
 	if s then
 		-- vector * scalar
-		return luavec.new(v1[1] * s, v1[2] * s, v1[3] * s, v1[4] * s)
+		return stdlua.new(v1[1] * s, v1[2] * s, v1[3] * s, v1[4] * s)
 	else
 		-- vector * vector
-		return luavec.new(v1[1] * v2[1], v1[2] * v2[2], v1[3] * v2[3], v1[4] * v2[4])
+		return stdlua.new(v1[1] * v2[1], v1[2] * v2[2], v1[3] * v2[3], v1[4] * v2[4])
 	end
 end
 
-mt.__unm = function(v) return luavec.new(-v[1], -v[2], -v[3], -v[4]) end
+mt.__unm = function(v) return stdlua.new(-v[1], -v[2], -v[3], -v[4]) end
 
--- select vec lib to use
---local veclib = luavec
---local veclib = vec
-local veclib = gcvec
+--
+
+if veclib == "stdlua" then
+	veclib = stdlua
+elseif veclib == "gcvec" then
+	veclib = gcvec
+elseif veclib == "luavec" then
+	veclib = vec
+else
+	error("Unknown vec lib: "..veclib)
+end
+
 newvec = veclib.new
 dot = veclib.dot
 cross = veclib.cross
