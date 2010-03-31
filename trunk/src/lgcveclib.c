@@ -1,5 +1,6 @@
 /*
 ** Alternative vec lib implementation with garbage collected userdata vectors
+** See Copyright Notice in lua.h
 */
 
 
