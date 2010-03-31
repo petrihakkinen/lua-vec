@@ -21,7 +21,7 @@ v.xy   -- returns vec(1, 2, 0, 0)
 
 = Vector API =
 
-The vector module brings the following new functions into Lua.
+The vector module brings the following new functions into Lua:
 
  * *vec.new(x, y, z, w)*: Returns a new vector initialized with the given elements. All elements are optional; missing elements are set to zero.
  * *vec.dot(a, b)*: Returns the dot product of two given vectors. This works for 1d, 2d, 3d and 4d vectors as long as unused elements (if any) are left to zero. 
