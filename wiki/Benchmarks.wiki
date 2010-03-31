@@ -2,15 +2,21 @@
 
 =Benchmarking Results=
 
-=== smallpt.lua, 256x192, 8*4 samples ===
+Here we compare lua-vec against other implementations: standard lua, garbage collected userdata vectors, LuaJIT (Lua just in time compiler, see http://luajit.org/) and C++ implementation. We have chosen smallpt (http://kevinbeason.com/smallpt/), an open source pathtracer which computes global illumination for a modified Cornell box scene. The application uses vectors heavily so we expect the execution time to be bottlenecked by vector operations. 
 
+We have ported smallpt to lua (see test/smallpt.lua in the source distribution) which supports three different vector implementations. In order to keep computation times low, we have chosen to run the benchmark in 256x192 resolution with 8*4 samples per pixel.
+
+Here are the results (smaller rendering times are better):
+ 
 || *Implementation* || *Time* || *Notes* ||
-|| std lua || 1217s || standard lua with vectors implemented in lua (see below for source code) ||
-|| gcvec || 770s || standard lua + C vector module (garbage collected userdata) ||
-|| lua-vec || 274s || lua with vectors (our implementation) ||
-|| luajit || na || ||
+|| std lua || 1217s || Standard lua 5.1.4 with vectors implemented in lua (see below for source code) ||
+|| gcvec || 770s || Standard lua & C vector module (garbage collected userdata) ||
+|| lua-vec || 274s || Lua with vectors (our implementation) ||
+|| luajit || 234s || LuaJIT 2.0.0-beta4 ||
 || luajit+lua-vec || ??? || ||
 || cpp || 10s || Full C++ implementation of smallpt ||
+
+As can be seen lua-vec is almost 4.5 times faster than standard lua. Lua-vec also clearly beats a userdata implementation, and is even qute near to LuaJIT's performance. Full C++ implementation is still an order of magnitude faster. LuaJIT's performance (which obviously uses vectors implemented in Lua) is probably totally bottlenecked by garbage collection.
 
 ===Lua vector implementation ===
 
