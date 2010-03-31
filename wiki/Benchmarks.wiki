@@ -2,7 +2,7 @@
 
 =Benchmarking Results=
 
-Here we compare lua-vec against other implementations: standard lua, garbage collected userdata vectors, LuaJIT (Lua just in time compiler, see http://luajit.org/) and C++ implementation. We have chosen smallpt (http://kevinbeason.com/smallpt/), an open source pathtracer which computes global illumination for a modified Cornell box scene. The application uses vectors heavily so we expect the execution time to be bottlenecked by vector operations. 
+Here we compare lua-vec against other implementations: standard lua, garbage collected userdata vectors, LuaJIT (Lua just in time compiler, see http://luajit.org/) and C++ implementation. We have chosen smallpt (http://kevinbeason.com/smallpt/), an open source global illumination renderer as the benchmark. Smallpt uses vectors heavily so we expect the execution time to be bottlenecked by vector operations. 
 
 We have ported smallpt to lua (see test/smallpt.lua in the source distribution) which supports three different vector implementations. In order to keep computation times low, we have chosen to run the benchmark in 256x192 resolution with 8*4 samples per pixel.
 
