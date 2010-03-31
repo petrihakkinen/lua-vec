@@ -1,5 +1,6 @@
 /*
 ** Vector math library
+** See Copyright Notice in lua.h
 */
 
 

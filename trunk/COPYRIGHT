@@ -7,9 +7,14 @@ and commercial purposes at absolutely no cost.
 
 For details and rationale, see http://www.lua.org/license.html .
 
+Lua-vec extension is licensed under the terms of the same MIT license as
+below.
+
+
 ===============================================================================
 
 Copyright (C) 1994-2008 Lua.org, PUC-Rio.
+Copyright (C) 2010 Lua-vec extension, Henri Häkkinen and Petri Häkkinen.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
