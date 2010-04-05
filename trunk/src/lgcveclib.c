@@ -24,13 +24,13 @@ typedef struct
 
 static void new_vec( lua_State* L, float x, float y, float z, float w )
 {
-	vec_t* v = (vec_t*)lua_newuserdata( L, sizeof(vec_t) );
-	v->x = x;
-	v->y = y;
-	v->z = z;
-	v->w = w;
-	luaL_getmetatable(L, "gcvec.vec");
-	lua_setmetatable(L, -2);
+  vec_t* v = (vec_t*)lua_newuserdata( L, sizeof(vec_t) );
+  v->x = x;
+  v->y = y;
+  v->z = z;
+  v->w = w;
+  luaL_getmetatable(L, "gcvec.vec");
+  lua_setmetatable(L, -2);
 }
 
 static int gcvec_new (lua_State *L) {
@@ -58,13 +58,13 @@ static int gcvec_cross (lua_State *L) {
 
 static int gcvec_length (lua_State *L) {
   const vec_t* v = checkvec(L, 1);
-  lua_pushnumber(L, sqrt(v->x*v->x + v->y*v->y + v->z*v->z + v->w*v->w));
+  lua_pushnumber(L, sqrtf(v->x*v->x + v->y*v->y + v->z*v->z + v->w*v->w));
   return 1;
 }
 
 static int gcvec_normalize (lua_State *L) {
   const vec_t* v = checkvec(L, 1);
-  float s = 1.0f / sqrt(v->x*v->x + v->y*v->y + v->z*v->z + v->w*v->w);
+  float s = 1.0f / sqrtf(v->x*v->x + v->y*v->y + v->z*v->z + v->w*v->w);
   new_vec(L, v->x*s, v->y*s, v->z*s, v->w*s);
   return 1;
 }
@@ -186,4 +186,3 @@ LUALIB_API int luaopen_gcvec (lua_State *L) {
   lua_setfield(L, -2, "one");
   return 1;
 }
-
