@@ -146,7 +146,7 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
           /* accessing by swizzling, such as vec.xy, vec.xxyz etc. */
           TValue res;
           float v[4] = {0.0f,0.0f,0.0f,0.0f};
-          int i;
+          unsigned int i;
           for (i = 0; i < tsvalue(key)->len; ++i) {
             switch (getstr(tsvalue(key))[i]) {
               case 'x':  v[i] = vecvalue(t)[0]; break;
