@@ -60,7 +60,6 @@ typedef union {
   void *p;
   lua_Number n;
   int b;
-  float vec[LUA_VEC_SIZE]; /* LUA-VEC */
 } Value;
 
 
@@ -100,7 +99,7 @@ typedef struct lua_TValue {
 #define hvalue(o)	check_exp(ttistable(o), &(o)->value.gc->h)
 #define bvalue(o)	check_exp(ttisboolean(o), (o)->value.b)
 #define thvalue(o)	check_exp(ttisthread(o), &(o)->value.gc->th)
-#define vecvalue(o)     check_exp(ttisvec(o), (o)->value.vec)  /* LUA-VEC */
+#define vecvalue(o)     check_exp(ttisvec(o), (o)->value.gc->vec)  /* LUA-VEC */
 
 #define l_isfalse(o)	(ttisnil(o) || (ttisboolean(o) && bvalue(o) == 0))
 
@@ -158,10 +157,14 @@ typedef struct lua_TValue {
     checkliveness(G(L),i_o); }
 
 /* LUA-VEC */
-#define setvecvalue(obj,x,y,z,w) \
-  { TValue *i_o=(obj); i_o->value.vec[0]=(x); i_o->value.vec[1]=(y); i_o->value.vec[2]=(z); i_o->value.vec[3]=(w); i_o->tt=LUA_TVEC; }
-
-
+#define setvecvalue(L,obj,x,y,z,w) \
+  { TValue *i_o=(obj); \
+    i_o->value.gc->vec[0]=(x); \
+    i_o->value.gc->vec[1]=(y); \
+    i_o->value.gc->vec[2]=(z); \
+    i_o->value.gc->vec[3]=(w); \
+    i_o->tt=LUA_TVEC; \
+    checkliveness(G(L),i_o); }
 
 #define setobj(L,obj1,obj2) \
   { const TValue *o2=(obj2); TValue *o1=(obj1); \
@@ -380,7 +383,6 @@ LUAI_FUNC const char *luaO_pushvfstring (lua_State *L, const char *fmt,
                                                        va_list argp);
 LUAI_FUNC const char *luaO_pushfstring (lua_State *L, const char *fmt, ...);
 LUAI_FUNC void luaO_chunkid (char *out, const char *source, size_t len);
-
 
 #endif
 
