@@ -143,6 +143,7 @@ union GCObject {
   struct Proto p;
   struct UpVal uv;
   struct lua_State th;  /* thread */
+  float vec[LUA_VEC_SIZE];  /* LUA-VEC */
 };
 
 

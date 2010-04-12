@@ -156,7 +156,7 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
               default:   luaG_typeerror(L, t, "index");
             }
           }
-          setvecvalue(&res, v[0], v[1], v[2], v[3]);
+          setvecvalue(L, &res, v[0], v[1], v[2], v[3]);
           setobj2s(L, val, &res);
           return;
         }
@@ -410,17 +410,17 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
           /* vector add/sub/mul vector */ \
 				  const float* nb = vecvalue(rb); \
           const float* nc = vecvalue(rc); \
-          setvecvalue(ra, (float)op(nb[0], nc[0]), (float)op(nb[1], nc[1]), (float)op(nb[2], nc[2]), (float)op(nb[3], nc[3])); \
+          setvecvalue(L, ra, (float)op(nb[0], nc[0]), (float)op(nb[1], nc[1]), (float)op(nb[2], nc[2]), (float)op(nb[3], nc[3])); \
         } else if (ttisvec(rb) && ttisnumber(rc) && (tm==TM_MUL || tm==TM_DIV)) { \
           /* vector mul/div scalar */ \
           const float* nb = vecvalue(rb); \
           lua_Number nc = nvalue(rc); \
-          setvecvalue(ra, (float)op(nb[0], nc), (float)op(nb[1], nc), (float)op(nb[2], nc), (float)op(nb[3], nc)); \
+          setvecvalue(L, ra, (float)op(nb[0], nc), (float)op(nb[1], nc), (float)op(nb[2], nc), (float)op(nb[3], nc)); \
         } else if (ttisnumber(rb) && ttisvec(rc) && tm==TM_MUL) { \
           /* scalar mul vector */ \
           lua_Number nb = nvalue(rb); \
           const float* nc = vecvalue(rc); \
-          setvecvalue(ra, (float)op(nb, nc[0]), (float)op(nb, nc[1]), (float)op(nb, nc[2]), (float)op(nb, nc[3])); \
+          setvecvalue(L, ra, (float)op(nb, nc[0]), (float)op(nb, nc[1]), (float)op(nb, nc[2]), (float)op(nb, nc[3])); \
         } else \
           Protect(Arith(L, ra, rb, rc, tm)); \
       }
@@ -554,7 +554,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
           setnvalue(ra, luai_numunm(nb));
         } else if (ttisvec(rb)) { /* LUA-VEC - added unary negate */
           const float* nb = vecvalue(rb);
-          setvecvalue(ra, -nb[0], -nb[1], -nb[2], -nb[3]);
+          setvecvalue(L, ra, -nb[0], -nb[1], -nb[2], -nb[3]);
         } else {
           Protect(Arith(L, ra, rb, rb, TM_UNM));
         }
