@@ -28,6 +28,7 @@
 #include "ltm.h"
 #include "lundump.h"
 #include "lvm.h"
+#include "lvector.h"
 
 
 
@@ -415,7 +416,7 @@ LUA_API const void *lua_topointer (lua_State *L, int idx) {
 /* LUA-VEC */
 LUA_API const float *lua_tovec (lua_State *L, int idx) {
   StkId o = index2adr(L, idx);
-  return (!ttisvec(o)) ? NULL : vecvalue(o);
+  return (!ttisvec(o)) ? NULL : vvalue(o)->vec;
 }
 
 
@@ -534,7 +535,7 @@ LUA_API int lua_pushthread (lua_State *L) {
 LUA_API void lua_pushvec (lua_State *L, float x, float y, float z, float w) {
   lua_lock(L);
   luaC_checkGC(L);
-  setvecvalue(L, L->top, x, y, z, w);
+  setvvalue(L, L->top, luaVec_new(L, x, y, z, w));
   api_incr_top(L);
   lua_unlock(L);
 }
