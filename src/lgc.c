@@ -73,6 +73,9 @@ static void reallymarkobject (global_State *g, GCObject *o) {
     case LUA_TSTRING: {
       return;
     }
+    case LUA_TVEC: {  /* LUA-VEC */
+      return;
+    }
     case LUA_TUSERDATA: {
       Table *mt = gco2u(o)->metatable;
       gray2black(o);  /* udata are never gray */
@@ -393,6 +396,10 @@ static void freeobj (lua_State *L, GCObject *o) {
     }
     case LUA_TUSERDATA: {
       luaM_freemem(L, o, sizeudata(gco2u(o)));
+      break;
+    }
+    case LUA_TVEC: {  /* LUA-VEC */
+      luaM_freemem(L, o, sizeof(struct Vector));
       break;
     }
     default: lua_assert(0);
