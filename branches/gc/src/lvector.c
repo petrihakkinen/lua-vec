@@ -15,11 +15,8 @@
 
 
 Vector *luaVec_new (lua_State *L, float x, float y, float z, float w) {
-  Vector *v;
-  v = cast(Vector *, luaM_malloc(L, sizeof(Vector)));
-  v->tt = LUA_TVEC;
-  v->marked = luaC_white(G(L));
-  v->next = G(L)->mainthread->next;
+  Vector *v = luaM_new(L, Vector);
+  luaC_link(L, obj2gco(v), LUA_TVEC);
   v->vec[0] = x;
   v->vec[1] = y;
   v->vec[2] = z;
