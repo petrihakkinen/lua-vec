@@ -73,9 +73,6 @@ static void reallymarkobject (global_State *g, GCObject *o) {
     case LUA_TSTRING: {
       return;
     }
-    case LUA_TVEC: {  /* LUA-VEC */
-      return;
-    }
     case LUA_TUSERDATA: {
       Table *mt = gco2u(o)->metatable;
       gray2black(o);  /* udata are never gray */
@@ -109,6 +106,10 @@ static void reallymarkobject (global_State *g, GCObject *o) {
       gco2p(o)->gclist = g->gray;
       g->gray = o;
       break;
+    }
+    case LUA_TVEC: {  /* LUA-VEC */
+      gray2black(o);
+      return;
     }
     default: lua_assert(0);
   }
