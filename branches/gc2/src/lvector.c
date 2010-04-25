@@ -13,9 +13,16 @@
 #include "lstate.h"
 #include "lvector.h"
 
+static GCObject *head = NULL;
 
 Vector *luaVec_new (lua_State *L, float x, float y, float z, float w) {
-  Vector *v = luaM_new(L, Vector);
+  Vector *v;
+  if (head) {
+    v = gco2v(head);
+    head = head->gch.next;
+  } else {
+    v = luaM_new(L, Vector);
+  }
   luaC_link(L, obj2gco(v), LUA_TVEC);
   v->vec[0] = x;
   v->vec[1] = y;
@@ -24,3 +31,7 @@ Vector *luaVec_new (lua_State *L, float x, float y, float z, float w) {
   return v;
 }
 
+void luaVec_free (lua_State *L, GCObject *o) {
+  o->gch.next = head;
+  head = o;
+}

@@ -13,6 +13,7 @@
 
 
 LUAI_FUNC Vector *luaVec_new (lua_State *L, float x, float y, float z, float w);
+LUAI_FUNC void luaVec_free (lua_State *L, GCObject *o);
 
 
 #endif
