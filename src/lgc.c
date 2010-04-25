@@ -21,6 +21,7 @@
 #include "lstring.h"
 #include "ltable.h"
 #include "ltm.h"
+#include "lvector.h"
 
 
 #define GCSTEPSIZE	1024u
@@ -400,7 +401,8 @@ static void freeobj (lua_State *L, GCObject *o) {
       break;
     }
     case LUA_TVEC: {  /* LUA-VEC */
-      luaM_freemem(L, o, sizeof(struct Vector));
+      /* luaM_freemem(L, o, sizeof(struct Vector)); */
+      luaVec_free(L, o);
       break;
     }
     default: lua_assert(0);
